@@ -1,5 +1,6 @@
 #include <3ds.h>
 #include <stdio.h>
+#include <arpa/inet.h>
 
 static void logButton(u32 keys, u32 button, const char *name)
 	{
@@ -33,14 +34,21 @@ int main(int argc, char **argv) {
 
 		consoleSelect(&topScreen);
 
-		printf("\x1b[1;0H3DS Mac Control v0.0.3 - made by odjegg]");
-		printf("\x1b[2;0HPress START to exit");
+		struct in_addr ip;
+		struct in_addr netmask;
+		struct in_addr broadcast;
 
-		printf("\x1b[4;0HTouch X coordinate: %i       ",touch.px);
-		printf("\x1b[5;0HTouch Y coordinate: %i       ",touch.py);
+		SOCU_GetIPInfo(&ip, &netmask, &broadcast);
 
-		printf("\x1b[8;0HCircle X coordinate: %i       ",circle.dx);
-		printf("\x1b[9;0HCircle Y coordinate: %i       ",circle.dy);
+		printf("\x1b[1;0H3DS Mac Control v0.0.4 - made by odjegg");
+		printf("\x1b[2;0HIP: %s", inet_ntoa(ip));
+		printf("\x1b[3;0HPress START to exit");
+
+		printf("\x1b[4;0HTouch X coordinate: %-4i",touch.px);
+		printf("\x1b[5;0HTouch Y coordinate: %-4i",touch.py);
+
+		printf("\x1b[8;0HCircle X coordinate: %-4i",circle.dx);
+		printf("\x1b[9;0HCircle Y coordinate: %-4i",circle.dy);
 
 		if (kHeld & KEY_TOUCH)
 			printf("\x1b[6;0HTouch active: TRUE ");
@@ -55,12 +63,10 @@ int main(int argc, char **argv) {
 
 		consoleSelect(&bottomScreen);
 
-		
 		logButton(kDown, KEY_A, "A");
 		logButton(kDown, KEY_B, "B");
 		logButton(kDown, KEY_X, "X");
 		logButton(kDown, KEY_Y, "Y");
-
 
 		if (kDown & KEY_START) break;
 
