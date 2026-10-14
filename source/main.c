@@ -1,6 +1,12 @@
 #include <3ds.h>
 #include <stdio.h>
 
+static void logButton(u32 keys, u32 button, const char *name)
+	{
+	if (keys & button)
+		printf("BUTTON %s PRESSED\n", name);
+	}
+
 int main(int argc, char **argv) {
 
 	gfxInitDefault();
@@ -27,56 +33,34 @@ int main(int argc, char **argv) {
 
 		consoleSelect(&topScreen);
 
-		printf("\x1b[1;0H3DS Mac Control v0.0.2 - made by odjegg]");
+		printf("\x1b[1;0H3DS Mac Control v0.0.3 - made by odjegg]");
 		printf("\x1b[2;0HPress START to exit");
 
-		printf("\x1b[3;0HTouch X coordinate: %i       ",touch.px);
-		printf("\x1b[4;0HTouch Y coordinate: %i       ",touch.py);
+		printf("\x1b[4;0HTouch X coordinate: %i       ",touch.px);
+		printf("\x1b[5;0HTouch Y coordinate: %i       ",touch.py);
 
-		printf("\x1b[6;0HCircle X coordinate: %i       ",circle.dx);
-		printf("\x1b[7;0HCircle Y coordinate: %i       ",circle.dy);
+		printf("\x1b[8;0HCircle X coordinate: %i       ",circle.dx);
+		printf("\x1b[9;0HCircle Y coordinate: %i       ",circle.dy);
 
 		if (kHeld & KEY_TOUCH)
-			printf("\x1b[5;0HTouch active: TRUE ");
+			printf("\x1b[6;0HTouch active: TRUE ");
 		else
-			printf("\x1b[5;0HTouch active: FALSE");
+			printf("\x1b[6;0HTouch active: FALSE");
 
-		if (kHeld & (KEY_CPAD_UP | KEY_CPAD_DOWN | KEY_CPAD_LEFT | KEY_CPAD_RIGHT))
-			printf("\x1b[8;0HCircle active: TRUE ");
-		else
-			printf("\x1b[8;0HCircle active: FALSE");
-
-		if (kHeld & KEY_A)
-			printf("\x1b[9;0HA key pressed: TRUE ");
-		else
-			printf("\x1b[9;0HA key pressed: FALSE");
-		if (kHeld & KEY_B)
-			printf("\x1b[10;0HB key pressed: TRUE ");
-		else
-			printf("\x1b[10;0HB key pressed: FALSE");
-		if (kHeld & KEY_X)
-			printf("\x1b[11;0HX key pressed: TRUE ");
-		else
-			printf("\x1b[11;0HX key pressed: FALSE");
-		if (kHeld & KEY_Y)
-			printf("\x1b[12;0HY key pressed: TRUE ");
-		else
-			printf("\x1b[12;0HY key pressed: FALSE");
-		if (kHeld & KEY_L)
-			printf("\x1b[13;0HL shoulder pressed: TRUE ");
-		else
-			printf("\x1b[13;0HL shoulder pressed: FALSE");
-		if (kHeld & KEY_R)
-			printf("\x1b[14;0HR shoulder pressed: TRUE ");
-		else
-			printf("\x1b[14;0HR shoulder pressed: FALSE");
+		printf("\x1b[11;0HA: %-5s B: %-5s X: %-5s Y: %-5s", 
+				(kHeld & KEY_A) ? "DOWN": "UP",
+				(kHeld & KEY_B) ? "DOWN": "UP",
+				(kHeld & KEY_X) ? "DOWN": "UP",
+				(kHeld & KEY_Y) ? "DOWN": "UP");
 
 		consoleSelect(&bottomScreen);
 
-		if (kDown & KEY_A)
-			printf("BUTTON A PRESSED\n");
-		if (kDown & KEY_B)
-			printf("BUTTON B PRESSED\n");
+		
+		logButton(kDown, KEY_A, "A");
+		logButton(kDown, KEY_B, "B");
+		logButton(kDown, KEY_X, "X");
+		logButton(kDown, KEY_Y, "Y");
+
 
 		if (kDown & KEY_START) break;
 
