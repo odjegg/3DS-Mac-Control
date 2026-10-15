@@ -25,15 +25,32 @@ static void logButton(int sock, const struct sockaddr_in *serverAddress, u32 key
 		// Send a message if socket is valid and there is a destination
 		if (sock >= 0 && serverAddress != NULL) {
             char message[64];
-            int length = snprintf(message, sizeof(message),
-                                  "BUTTON %s PRESSED\n", name);
+            int length = snprintf(message, sizeof(message), "BUTTON %s PRESSED\n", name);
 
             if (length > 0) {
                 sendto(sock, message, (size_t)length,0, (const struct sockaddr *)serverAddress, sizeof(*serverAddress));
-            }
+            } else {
+				printf("No connection");
+			}
         }
 	}
 }
+
+static void logTouch(int sock, const struct sockaddr_in *serverAddress, touchPosition touch) {
+		printf("TOUCH COORDINATES: %i, %i\n", touch.px, touch.py); // Log for bottom screen
+		
+		// Send a message if socket is valid and there is a destination
+		if (sock >= 0 && serverAddress != NULL) {
+            char message[64];
+            int length = snprintf(message, sizeof(message), "TOUCH COORDINATES: %i, %i\n", touch.px, touch.py);
+
+            if (length > 0) {
+                sendto(sock, message, (size_t)length,0, (const struct sockaddr *)serverAddress, sizeof(*serverAddress));
+            } else {
+				printf("No connection");
+			}
+        }
+	}
 
 int main(int argc, char **argv) {
 	gfxInitDefault();
@@ -105,7 +122,7 @@ int main(int argc, char **argv) {
 
 		SOCU_GetIPInfo(&ip, &netmask, &broadcast);
 
-		printf("\x1b[1;0H3DS Mac Control v0.1.0 - made by odjegg");
+		printf("\x1b[1;0H3DS Mac Control v0.1.1 - made by odjegg");
 		printf("\x1b[2;0HIP: %s", inet_ntoa(ip));
 		printf("\x1b[3;0HPress START to exit");
 
@@ -132,6 +149,10 @@ int main(int argc, char **argv) {
 		logButton(sock, &serverAddress, kDown, KEY_B, "B");
 		logButton(sock, &serverAddress, kDown, KEY_X, "X");
 		logButton(sock, &serverAddress, kDown, KEY_Y, "Y");
+
+		if (kHeld & KEY_TOUCH) {
+			logTouch(sock, &serverAddress, touch);
+		}
 
 		if (kDown & KEY_START) break;
 
