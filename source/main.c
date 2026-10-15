@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
 
 		SOCU_GetIPInfo(&ip, &netmask, &broadcast);
 
-		printf("\x1b[1;0H3DS Mac Control v0.1.2 - made by odjegg");
+		printf("\x1b[1;0H3DS Mac Control v0.1.3 - made by odjegg");
 		printf("\x1b[2;0HIP: %s", inet_ntoa(ip));
 		printf("\x1b[3;0HPress START to exit");
 
@@ -162,6 +162,10 @@ int main(int argc, char **argv) {
 		logButton(sock, &serverAddress, kDown, KEY_B, "B");
 		logButton(sock, &serverAddress, kDown, KEY_X, "X");
 		logButton(sock, &serverAddress, kDown, KEY_Y, "Y");
+		logButton(sock, &serverAddress, kDown, KEY_L, "L");
+		logButton(sock, &serverAddress, kDown, KEY_R, "R");
+		logButton(sock, &serverAddress, kDown, KEY_SELECT, "EXIT");
+		logButton(sock, &serverAddress, kDown, KEY_START, "EXIT");
 
 		if (kHeld & KEY_TOUCH) {
 			logTouch(sock, &serverAddress, touch);
