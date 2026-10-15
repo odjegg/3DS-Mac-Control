@@ -7,7 +7,7 @@ port = 5000
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((ip, port))
 
-print("Python client for 3DS-Mac-Control v0.1")
+print("Python client v0.0.3 for 3DS-Mac-Control v0.1.3")
 print("Listening on UDP port 5000")
 
 mouse = Controller()
@@ -41,8 +41,10 @@ while run == True:
         mouse.click(Button.right)
     if "BUTTON Y PRESSED" in text:
         mouse.click(Button.left)
+    if "BUTTON L PRESSED" in text:
+        mouse.click(Button.left)
+    if "BUTTON R PRESSED" in text:
+        mouse.click(Button.right)
 
     if "EXIT" in text:
         run = False
-
-
