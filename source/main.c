@@ -12,7 +12,7 @@
 
 
 // The IP and Port of the computer hosting the server
-#define SERVER_IP "192.168.1.204"
+#define SERVER_IP "192.168.1.204" // REPLACE WITH YOUR PC'S LOCAL IP!!
 #define SERVER_PORT 5000
 // Creating buffer to reserve memory for networking
 #define SOC_ALIGN 0x1000 // 4096 byte alignment
@@ -21,7 +21,6 @@
 static void logButton(int sock, const struct sockaddr_in *serverAddress, u32 keys, u32 button, const char *name) {
 	if (keys & button) {
 		printf("BUTTON %s PRESSED\n", name); // Log for bottom screen
-		
 		// Send a message if socket is valid and there is a destination
 		if (sock >= 0 && serverAddress != NULL) {
             char message[64];
@@ -37,20 +36,34 @@ static void logButton(int sock, const struct sockaddr_in *serverAddress, u32 key
 }
 
 static void logTouch(int sock, const struct sockaddr_in *serverAddress, touchPosition touch) {
-		printf("TOUCH COORDINATES: %i, %i\n", touch.px, touch.py); // Log for bottom screen
-		
-		// Send a message if socket is valid and there is a destination
-		if (sock >= 0 && serverAddress != NULL) {
-            char message[64];
-            int length = snprintf(message, sizeof(message), "TOUCH COORDINATES: %i, %i\n", touch.px, touch.py);
+	printf("TOUCH COORDINATES: %i, %i\n", touch.px, touch.py); // Log for bottom screen
+	// Send a message if socket is valid and there is a destination
+	if (sock >= 0 && serverAddress != NULL) {
+        char message[64];
+        int length = snprintf(message, sizeof(message), "TOUCH COORDINATES: %i, %i\n", touch.px, touch.py);
 
-            if (length > 0) {
-                sendto(sock, message, (size_t)length,0, (const struct sockaddr *)serverAddress, sizeof(*serverAddress));
-            } else {
-				printf("No connection");
-			}
-        }
-	}
+        if (length > 0) {
+            sendto(sock, message, (size_t)length,0, (const struct sockaddr *)serverAddress, sizeof(*serverAddress));
+        } else {
+			printf("No connection");
+		}
+    }
+}
+
+static void logCircle(int sock, const struct sockaddr_in *serverAddress, circlePosition circle) {
+	printf("CIRCLE COORDINATES: %i, %i\n", circle.dx, circle.dy); // Log for bottom screen
+	// Send a message if socket is valid and there is a destination
+	if (sock >= 0 && serverAddress != NULL) {
+        char message[64];
+        int length = snprintf(message, sizeof(message), "CIRCLE COORDINATES: %i, %i\n", circle.dx, circle.dy);
+
+        if (length > 0) {
+            sendto(sock, message, (size_t)length,0, (const struct sockaddr *)serverAddress, sizeof(*serverAddress));
+        } else {
+			printf("No connection");
+		}
+    }
+}
 
 int main(int argc, char **argv) {
 	gfxInitDefault();
@@ -122,7 +135,7 @@ int main(int argc, char **argv) {
 
 		SOCU_GetIPInfo(&ip, &netmask, &broadcast);
 
-		printf("\x1b[1;0H3DS Mac Control v0.1.1 - made by odjegg");
+		printf("\x1b[1;0H3DS Mac Control v0.1.2 - made by odjegg");
 		printf("\x1b[2;0HIP: %s", inet_ntoa(ip));
 		printf("\x1b[3;0HPress START to exit");
 
@@ -152,6 +165,10 @@ int main(int argc, char **argv) {
 
 		if (kHeld & KEY_TOUCH) {
 			logTouch(sock, &serverAddress, touch);
+		}
+
+		if (kHeld & (KEY_CPAD_UP | KEY_CPAD_DOWN | KEY_CPAD_LEFT | KEY_CPAD_RIGHT)) {
+			logCircle(sock, &serverAddress, circle);
 		}
 
 		if (kDown & KEY_START) break;
